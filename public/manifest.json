@@ -1,0 +1,10 @@
+{
+  "name": "Task Memo",
+  "icons": [
+    {
+      "src": "vite.svg",
+      "type": "image/svg",
+      "sizes": "512x512"
+    }
+  ]
+}
