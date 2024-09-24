@@ -3,8 +3,9 @@
   "icons": [
     {
       "src": "vite.svg",
-      "type": "image/svg",
-      "sizes": "512x512"
+      "sizes": "192x192 512x512"
     }
-  ]
+  ],
+  "start_url": "https://akabana0524.github.io/task-memo/",
+  "display": "standalone"
 }
