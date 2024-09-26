@@ -1,26 +1,70 @@
 <template>
-  <v-app>
-    <v-app-bar :elevation="2" density="compact">
-      <template v-slot:prepend>
-        <v-app-bar-nav-icon></v-app-bar-nav-icon>
-      </template>
-
-      <v-app-bar-title>Task Memo</v-app-bar-title>
-    </v-app-bar>
-  </v-app>
+  <v-responsive>
+    <v-app :theme="theme">
+      <v-app-bar :elevation="2" density="compact">
+        <v-app-bar-title>Task Memo</v-app-bar-title>
+        <v-spacer></v-spacer>
+        <v-btn icon>
+          <v-icon icon="mdi-dots-vertical" />
+          <v-menu activator="parent">
+            <v-list>
+              <v-list-item
+                title="テーマ切り替え"
+                :prepend-icon="themeIcon"
+                @click="swapTheme"
+              />
+            </v-list>
+          </v-menu>
+        </v-btn>
+      </v-app-bar>
+      <v-main>
+        <TaskList />
+        <v-fab
+          color="cyan"
+          icon="mdi-plus"
+          location="bottom end"
+          size="64"
+          absolute
+          app
+          @click="addRandomTask"
+        >
+          <v-dialog activator="parent" v-model="inputFormActive">
+            <v-card>
+              <template v-slot:actions>
+                <v-btn class="ml-auto" text="追加" @click="confirm"></v-btn>
+              </template>
+            </v-card>
+          </v-dialog>
+        </v-fab>
+      </v-main>
+    </v-app>
+  </v-responsive>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+<script lang="ts" setup>
+import { computed, ref, watch } from "vue";
+import TaskList from "./components/TaskList.vue";
+import { useTask } from "./composables/Task";
+
+const { addTask, loadTasks } = useTask();
+loadTasks();
+
+function addRandomTask() {
+  addTask({ title: new Date().toISOString() });
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+function swapTheme() {
+  theme.value = theme.value === "light" ? "dark" : "light";
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+var themeString = localStorage.getItem("theme") ?? "dark";
+const theme = ref(themeString);
+watch(theme, (v) => localStorage.setItem("theme", v));
+const themeIcon = computed(() =>
+  theme.value == "light" ? "mdi-weather-sunny" : "mdi-weather-night"
+);
+
+const inputFormActive = ref(false);
+function confirm() {
+  inputFormActive.value = false;
+  addRandomTask();
 }
-</style>
+</script>
