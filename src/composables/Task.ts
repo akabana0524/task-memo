@@ -7,9 +7,6 @@ export interface Task {
   title: TaskTitle;
   createdAt: Date;
 }
-export interface RegisterTask {
-  title: TaskTitle;
-}
 
 // global
 const tasks = ref<Task[]>([]);
@@ -33,13 +30,12 @@ export function useTask() {
     }
   }
 
-  function addTask(registerTask: RegisterTask) {
-    var task: Task = {
+  function addBlankTask() {
+    tasks.value.push({
       taskId: crypto.randomUUID(),
       createdAt: new Date(),
-      ...registerTask,
-    };
-    tasks.value.push(task);
+      title: "",
+    });
   }
 
   function removeTask(taskId: TaskId) {
@@ -49,5 +45,5 @@ export function useTask() {
     }
   }
 
-  return { tasks, addTask, removeTask, loadTasks };
+  return { tasks, addBlankTask, removeTask, loadTasks };
 }

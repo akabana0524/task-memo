@@ -1,6 +1,5 @@
 <template>
   <draggable
-    v-if="tasks.length > 0"
     v-model="tasks"
     tag="v-list"
     group="task"
@@ -10,9 +9,12 @@
     :component-data="{ transition: 'slide-y-transition' }"
   >
     <template #item="{ element: task }">
-      <TaskListItem :task="task" :key="task.taskId" :border="1">{{
+      <TaskListItem :task="task" :key="task.taskId">{{
         task.title
       }}</TaskListItem>
+    </template>
+    <template #footer>
+      <v-list-item @click="addBlankTask">+</v-list-item>
     </template>
   </draggable>
 </template>
@@ -24,5 +26,5 @@ import { useTask } from "../composables/Task";
 import TaskListItem from "./TaskListItem.vue";
 
 const drag = ref(false);
-const { tasks } = useTask();
+const { tasks, addBlankTask } = useTask();
 </script>
