@@ -17,7 +17,6 @@
   </v-list-item>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
 import { Task, useTask } from "../composables/Task";
 
 interface TaskListItemProps {
@@ -25,5 +24,4 @@ interface TaskListItemProps {
 }
 const { task } = defineProps<TaskListItemProps>();
 const { removeTask } = useTask();
-var hoge = ref(false);
 </script>
