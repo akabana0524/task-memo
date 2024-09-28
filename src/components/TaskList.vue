@@ -15,10 +15,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
 import { useTask } from "../composables/Task";
 import TaskListItem from "./TaskListItem.vue";
 
-const drag = ref(false);
 const { tasks, addBlankTask } = useTask();
 </script>
