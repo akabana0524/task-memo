@@ -7,5 +7,7 @@
     }
   ],
   "start_url": "https://akabana0524.github.io/task-memo/",
-  "display": "standalone"
+  "display": "standalone",
+  "background_color": "black",
+  "theme_color": "gray"
 }
