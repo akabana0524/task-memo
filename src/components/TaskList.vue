@@ -14,7 +14,13 @@
       }}</TaskListItem>
     </template>
     <template #footer>
-      <v-list-item @click="addBlankTask">+</v-list-item>
+      <v-list-item @click="addBlankTask">
+        <v-row>
+          <v-spacer />
+          <v-col cols="auto"><v-icon>mdi-plus</v-icon></v-col>
+          <v-spacer />
+        </v-row>
+      </v-list-item>
     </template>
   </draggable>
 </template>

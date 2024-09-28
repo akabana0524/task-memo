@@ -4,6 +4,8 @@ export type TaskId = string;
 export type TaskTitle = string;
 export type CreatedAt = string;
 export type CompletedAt = string;
+export type DifferenceInDaysLabel = string;
+export type DateLabel = string;
 export interface Task {
   taskId: TaskId;
   title: TaskTitle;
@@ -15,6 +17,11 @@ export interface TaskHistory {
   completedAt: CompletedAt;
 }
 
+export interface TaskHistoryInfo extends TaskHistory {
+  differenceInDaysLabel: DifferenceInDaysLabel;
+  dateLabel: DateLabel;
+}
+
 // global
 const tasks = ref<Task[]>([]);
 const taskHistories = ref<TaskHistory[]>([]);
@@ -23,7 +30,6 @@ const taskHistories = ref<TaskHistory[]>([]);
 watch(
   tasks,
   (v) => {
-    console.log("save tasks");
     localStorage.setItem("tasks", JSON.stringify(v));
   },
   { deep: true }
@@ -31,7 +37,6 @@ watch(
 watch(
   taskHistories,
   (v) => {
-    console.log("save taskHistories");
     localStorage.setItem("taskHistories", JSON.stringify(v));
   },
   { deep: true }
@@ -66,8 +71,20 @@ export function useTask() {
   function getTask(taskId: TaskId) {
     return tasks.value.find((v) => v.taskId == taskId)!;
   }
-  function findTaskHistory(taskTitle: TaskTitle) {
-    return taskHistories.value.find((v) => v.title == taskTitle) || null;
+  function findTaskHistory(taskTitle: TaskTitle): TaskHistoryInfo | null {
+    var taskHistory = taskHistories.value.find((v) => v.title == taskTitle);
+    return taskHistory
+      ? {
+          ...taskHistory,
+          differenceInDaysLabel:
+            Math.floor(
+              (new Date().getTime() -
+                new Date(taskHistory.completedAt).getTime()) /
+                (1000 * 60 * 60 * 24)
+            ) + "日前",
+          dateLabel: new Date(taskHistory.completedAt).toLocaleDateString(),
+        }
+      : null;
   }
 
   function completeTask(taskId: TaskId) {
@@ -93,8 +110,16 @@ export function useTask() {
     }
   }
 
-  const taskHistoryTitles = computed(() =>
-    taskHistories.value.map((v) => v.title)
+  const taskHistoryInfos = computed(() =>
+    taskHistories.value.map((v) => ({
+      ...v,
+      differenceInDaysLabel:
+        Math.floor(
+          (new Date().getTime() - new Date(v.completedAt).getTime()) /
+            (1000 * 60 * 60 * 24)
+        ) + "日前",
+      dateLabel: new Date(v.completedAt).toLocaleDateString(),
+    }))
   );
   return {
     tasks,
@@ -102,7 +127,7 @@ export function useTask() {
     completeTask,
     removeTask,
     loadTasks,
-    taskHistoryTitles,
+    taskHistoryInfos,
     findTaskHistory,
   };
 }

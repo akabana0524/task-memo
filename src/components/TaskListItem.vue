@@ -8,45 +8,63 @@
     <template v-slot:title>
       <v-combobox
         v-model="task.title"
-        :items="taskHistoryTitles"
+        :items="taskHistoryInfos"
+        item-title="title"
+        item-value="title"
         variant="plain"
         hide-details
         single-line
         hide-spin-buttons
+        hide-selected
+        :return-object="false"
         density="compact"
-      />
+      >
+        <template v-slot:item="{ item, props }">
+          <v-list-item v-bind="props">
+            <template v-slot:title>
+              {{ item.title }}
+            </template>
+            <template v-slot:subtitle
+              >(前回: {{ item.raw.differenceInDaysLabel }} ({{
+                item.raw.dateLabel
+              }}))
+            </template>
+          </v-list-item>
+        </template>
+      </v-combobox>
     </template>
     <template v-slot:subtitle>
-      <div v-if="completedAt != null">
-        前回: {{ completeDifferenceInDays }}日前 ({{ completedAt }})
+      <div v-if="taskHistory != null">
+        前回: {{ taskHistory.differenceInDaysLabel }} ({{
+          taskHistory.dateLabel
+        }})
       </div>
     </template>
   </v-list-item>
 </template>
 <script lang="ts" setup>
-import { nextTick } from "vue";
+import { computed, defineProps, nextTick, toRefs } from "vue";
 import { Task, useTask } from "../composables/Task";
 
 interface TaskListItemProps {
   task: Task;
 }
-const { task } = defineProps<TaskListItemProps>();
+const props = defineProps<TaskListItemProps>();
+const { task } = toRefs(props);
 const {
   completeTask: _completeTask,
-  taskHistoryTitles,
+  taskHistoryInfos,
   findTaskHistory,
 } = useTask();
-const taskHistory = findTaskHistory(task.title);
-const completedAt = taskHistory
-  ? new Date(taskHistory.completedAt).toLocaleString()
-  : null;
-const completeDifferenceInDays = taskHistory
-  ? Math.floor(
-      (new Date().getTime() - new Date(taskHistory.completedAt).getTime()) /
-        (1000 * 60 * 60 * 24)
-    )
-  : 0;
+const taskHistory = computed(() => findTaskHistory(task.value.title));
+
 function completeTask() {
-  nextTick(() => _completeTask(task.taskId));
+  nextTick(() => _completeTask(task.value.taskId));
 }
 </script>
+
+<style>
+.v-field__append-inner {
+  display: none;
+}
+</style>

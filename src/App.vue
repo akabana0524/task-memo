@@ -3,7 +3,7 @@
     <v-app :theme="theme">
       <v-app-bar :elevation="2" density="compact">
         <v-app-bar-title>Task Memo</v-app-bar-title>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn icon>
           <v-icon icon="mdi-dots-vertical" />
           <v-menu activator="parent">
