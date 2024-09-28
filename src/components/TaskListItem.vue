@@ -1,8 +1,8 @@
 <template>
-  <v-list-item>
+  <v-list-item :base-color="completed ? 'success' : ''">
     <template v-slot:prepend>
       <v-list-item-action start>
-        <v-checkbox-btn @change="completeTask" />
+        <v-checkbox-btn @change="check" />
       </v-list-item-action>
     </template>
     <template v-slot:title>
@@ -43,7 +43,7 @@
   </v-list-item>
 </template>
 <script lang="ts" setup>
-import { computed, defineProps, nextTick, toRefs } from "vue";
+import { computed, toRefs } from "vue";
 import { Task, useTask } from "../composables/Task";
 
 interface TaskListItemProps {
@@ -57,9 +57,11 @@ const {
   findTaskHistory,
 } = useTask();
 const taskHistory = computed(() => findTaskHistory(task.value.title));
+const completed = computed(() => task.value.completed);
 
-function completeTask() {
-  nextTick(() => _completeTask(task.value.taskId));
+function check(e: InputEvent) {
+  var checked: boolean = (e.target as any).checked;
+  task.value.completed = checked;
 }
 </script>
 

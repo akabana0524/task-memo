@@ -6,10 +6,12 @@ export type CreatedAt = string;
 export type CompletedAt = string;
 export type DifferenceInDaysLabel = string;
 export type DateLabel = string;
+export type Completed = boolean;
 export interface Task {
   taskId: TaskId;
   title: TaskTitle;
   createdAt: CreatedAt;
+  completed: Completed;
 }
 
 export interface TaskHistory {
@@ -66,6 +68,7 @@ export function useTask() {
       taskId: crypto.randomUUID(),
       createdAt: new Date().toISOString(),
       title: "",
+      completed: false,
     });
   }
   function getTask(taskId: TaskId) {
@@ -90,6 +93,7 @@ export function useTask() {
   function completeTask(taskId: TaskId) {
     var task = getTask(taskId);
     if (task.title) {
+      task.completed = true;
       var taskHistory = findTaskHistory(task.title);
       if (taskHistory) {
         taskHistory.completedAt = new Date().toISOString();
@@ -100,7 +104,17 @@ export function useTask() {
         });
       }
     }
-    removeTask(taskId);
+  }
+
+  function removeCompletedTasks() {
+    var removeTargetTaskIds = tasks.value
+      .filter((v) => v.completed)
+      .map((v) => v.taskId);
+    removeTargetTaskIds.forEach(removeTask);
+  }
+  function removeAllTasks() {
+    var removeTargetTaskIds = tasks.value.map((v) => v.taskId);
+    removeTargetTaskIds.forEach(removeTask);
   }
 
   function removeTask(taskId: TaskId) {
@@ -125,7 +139,8 @@ export function useTask() {
     tasks,
     addBlankTask,
     completeTask,
-    removeTask,
+    removeCompletedTasks,
+    removeAllTasks,
     loadTasks,
     taskHistoryInfos,
     findTaskHistory,
