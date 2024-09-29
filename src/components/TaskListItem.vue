@@ -24,17 +24,20 @@
             <template v-slot:title>
               {{ item.title }}
             </template>
-            <template v-slot:subtitle
-              >(前回: {{ item.raw.differenceInDaysLabel }} ({{
-                item.raw.dateLabel
-              }}))
+            <template v-slot:subtitle>
+              <div style="text-align: end">
+                前回: {{ item.raw.differenceInDaysLabel }} ({{
+                  item.raw.dateLabel
+                }})
+              </div>
             </template>
           </v-list-item>
+          <v-divider />
         </template>
       </v-combobox>
     </template>
     <template v-slot:subtitle>
-      <div v-if="taskHistory != null">
+      <div v-if="taskHistory != null" style="text-align: end">
         前回: {{ taskHistory.differenceInDaysLabel }} ({{
           taskHistory.dateLabel
         }})
@@ -68,5 +71,8 @@ function check(e: InputEvent) {
 <style>
 .v-field__append-inner {
   display: none;
+}
+.v-field__input {
+  padding-top: 0;
 }
 </style>
