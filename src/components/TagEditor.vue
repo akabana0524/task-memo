@@ -1,18 +1,17 @@
 <template>
-  <v-chip :color="tag.color" variant="flat">
-    <template v-slot:default>
+  <div>
+    <v-chip :color="tag.color" variant="flat">
       <input type="text" v-model="tag.name" />
-    </template>
-    <template v-slot:append>
-      <v-menu>
-        <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" icon="mdi-palette" />
-        </template>
-        <v-color-picker v-model="tag.color" />
-      </v-menu>
-      <v-btn @click="_deleteTag" icon="mdi-trash-can" />
-    </template>
-  </v-chip>
+    </v-chip>
+
+    <v-menu>
+      <template v-slot:activator="{ props }">
+        <v-btn v-bind="props" icon="mdi-palette" variant="flat" />
+      </template>
+      <v-color-picker v-model="tag.color" />
+    </v-menu>
+    <v-btn @click="_deleteTag" icon="mdi-trash-can" variant="flat" />
+  </div>
 </template>
 <script lang="ts" setup>
 import { toRefs } from "vue";
