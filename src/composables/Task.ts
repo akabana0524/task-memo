@@ -1,4 +1,4 @@
-import { computed, ref, watch } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 
 export type TaskId = string;
 export type TaskTitle = string;
@@ -7,6 +7,7 @@ export type CompletedAt = string;
 export type DifferenceInDaysLabel = string;
 export type DateLabel = string;
 export type Completed = boolean;
+
 export interface Task {
   taskId: TaskId;
   title: TaskTitle;
@@ -27,6 +28,7 @@ export interface TaskHistoryInfo extends TaskHistory {
 // global
 const tasks = ref<Task[]>([]);
 const taskHistories = ref<TaskHistory[]>([]);
+const newPopTaskId = ref<TaskId | null>(null);
 
 // save
 watch(
@@ -63,12 +65,25 @@ export function useTask() {
     }
   }
 
-  function addBlankTask() {
-    tasks.value.push({
-      taskId: crypto.randomUUID(),
+  function addBlankTask(insertAfterTaskId?: TaskId) {
+    var taskId = crypto.randomUUID();
+    var newTask = {
+      taskId,
       createdAt: new Date().toISOString(),
       title: "",
       completed: false,
+    };
+    if (insertAfterTaskId) {
+      tasks.value.splice(
+        tasks.value.findIndex((v) => v.taskId == insertAfterTaskId) + 1,
+        0,
+        newTask
+      );
+    } else {
+      tasks.value.push(newTask);
+    }
+    nextTick(() => {
+      newPopTaskId.value = taskId;
     });
   }
   function getTask(taskId: TaskId) {
@@ -137,6 +152,7 @@ export function useTask() {
   );
   return {
     tasks,
+    newPopTaskId,
     addBlankTask,
     completeTask,
     removeCompletedTasks,

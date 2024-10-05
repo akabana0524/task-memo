@@ -5,7 +5,7 @@
       <v-divider />
     </template>
   </v-slide-x-transition>
-  <v-list-item @click="addBlankTask" key="footer">
+  <v-list-item @click="_addBlankTask" key="footer">
     <v-row>
       <v-spacer />
       <v-col cols="auto"><v-icon>mdi-plus</v-icon></v-col>
@@ -19,4 +19,7 @@ import { useTask } from "../composables/Task";
 import TaskListItem from "./TaskListItem.vue";
 
 const { tasks, addBlankTask } = useTask();
+function _addBlankTask() {
+  addBlankTask();
+}
 </script>

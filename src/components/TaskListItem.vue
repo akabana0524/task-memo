@@ -7,6 +7,7 @@
     </template>
     <template v-slot:title>
       <v-combobox
+        ref="combobox"
         v-model="task.title"
         :items="taskHistoryInfos"
         item-title="title"
@@ -18,6 +19,7 @@
         hide-selected
         :return-object="false"
         density="compact"
+        @keydown="keyDown"
       >
         <template v-slot:item="{ item, props }">
           <v-list-item v-bind="props">
@@ -46,25 +48,40 @@
   </v-list-item>
 </template>
 <script lang="ts" setup>
-import { computed, toRefs } from "vue";
+import { computed, toRefs, useTemplateRef, watch } from "vue";
+import type { VCombobox } from "vuetify/components";
 import { Task, useTask } from "../composables/Task";
 
 interface TaskListItemProps {
   task: Task;
 }
+const combobox = useTemplateRef<VCombobox>("combobox");
 const props = defineProps<TaskListItemProps>();
 const { task } = toRefs(props);
 const {
   completeTask: _completeTask,
   taskHistoryInfos,
   findTaskHistory,
+  addBlankTask,
+  newPopTaskId,
 } = useTask();
+watch(newPopTaskId, (v) => {
+  if (task.value.taskId == v) {
+    combobox.value?.focus();
+    newPopTaskId.value = null;
+  }
+});
 const taskHistory = computed(() => findTaskHistory(task.value.title));
 const completed = computed(() => task.value.completed);
 
 function check(e: InputEvent) {
   var checked: boolean = (e.target as any).checked;
   task.value.completed = checked;
+}
+function keyDown(e: KeyboardEvent) {
+  if (e.code == "Enter") {
+    addBlankTask(task.value.taskId);
+  }
 }
 </script>
 
