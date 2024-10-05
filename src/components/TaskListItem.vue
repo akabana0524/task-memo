@@ -2,7 +2,7 @@
   <v-list-item :base-color="completed ? 'success' : ''">
     <template v-slot:prepend>
       <v-list-item-action start>
-        <v-checkbox-btn @change="check" />
+        <v-checkbox-btn v-model="_check" />
       </v-list-item-action>
     </template>
     <template v-slot:title>
@@ -22,18 +22,7 @@
         @keydown="keyDown"
       >
         <template v-slot:item="{ item, props }">
-          <v-list-item v-bind="props">
-            <template v-slot:title>
-              {{ item.title }}
-            </template>
-            <template v-slot:subtitle>
-              <div style="text-align: end">
-                前回: {{ item.raw.differenceInDaysLabel }} ({{
-                  item.raw.dateLabel
-                }})
-              </div>
-            </template>
-          </v-list-item>
+          <TaskHistory v-bind="props" :taskHistoryInfo="item.raw" />
           <v-divider />
         </template>
       </v-combobox>
@@ -51,6 +40,7 @@
 import { computed, toRefs, useTemplateRef, watch } from "vue";
 import type { VCombobox } from "vuetify/components";
 import { Task, useTask } from "../composables/Task";
+import TaskHistory from "./TaskHistory.vue";
 
 interface TaskListItemProps {
   task: Task;
@@ -59,7 +49,7 @@ const combobox = useTemplateRef<VCombobox>("combobox");
 const props = defineProps<TaskListItemProps>();
 const { task } = toRefs(props);
 const {
-  completeTask: _completeTask,
+  changeCompleteTask,
   taskHistoryInfos,
   findTaskHistory,
   addBlankTask,
@@ -73,11 +63,10 @@ watch(newPopTaskId, (v) => {
 });
 const taskHistory = computed(() => findTaskHistory(task.value.title));
 const completed = computed(() => task.value.completed);
-
-function check(e: InputEvent) {
-  var checked: boolean = (e.target as any).checked;
-  task.value.completed = checked;
-}
+const _check = computed<boolean>({
+  get: () => task.value.completed,
+  set: (v) => changeCompleteTask(task.value.taskId, v),
+});
 function keyDown(e: KeyboardEvent) {
   if (e.code == "Enter") {
     addBlankTask(task.value.taskId);

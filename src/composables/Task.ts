@@ -104,19 +104,28 @@ export function useTask() {
         }
       : null;
   }
+  function deleteTaskHistory(taskTitle: TaskTitle) {
+    var index = taskHistories.value.findIndex((v) => v.title == taskTitle);
+    console.log("deleteTaskHistory", { taskTitle, index });
+    if (index != -1) {
+      taskHistories.value.splice(index, 1);
+    }
+  }
 
-  function completeTask(taskId: TaskId) {
+  function changeCompleteTask(taskId: TaskId, checked: boolean) {
     var task = getTask(taskId);
     if (task.title) {
-      task.completed = true;
-      var taskHistory = findTaskHistory(task.title);
-      if (taskHistory) {
-        taskHistory.completedAt = new Date().toISOString();
-      } else {
-        taskHistories.value.push({
-          title: task.title,
-          completedAt: new Date().toISOString(),
-        });
+      task.completed = checked;
+      if (checked) {
+        var taskHistory = findTaskHistory(task.title);
+        if (taskHistory) {
+          taskHistory.completedAt = new Date().toISOString();
+        } else {
+          taskHistories.value.push({
+            title: task.title,
+            completedAt: new Date().toISOString(),
+          });
+        }
       }
     }
   }
@@ -154,11 +163,12 @@ export function useTask() {
     tasks,
     newPopTaskId,
     addBlankTask,
-    completeTask,
+    changeCompleteTask,
     removeCompletedTasks,
     removeAllTasks,
     loadTasks,
     taskHistoryInfos,
     findTaskHistory,
+    deleteTaskHistory,
   };
 }
