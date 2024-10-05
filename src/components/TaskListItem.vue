@@ -91,7 +91,7 @@ const _check = computed<boolean>({
   set: (v) => changeCompleteTask(task.value.taskId, v),
 });
 function keyDown(e: KeyboardEvent) {
-  if (!e.isComposing && e.code == "Enter") {
+  if (!e.isComposing && e.key == "Enter") {
     addBlankTask(task.value.taskId);
   }
 }
