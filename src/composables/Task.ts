@@ -1,4 +1,5 @@
 import { computed, nextTick, ref, watch } from "vue";
+import { TagId } from "./Tag";
 
 export type TaskId = string;
 export type TaskTitle = string;
@@ -13,10 +14,12 @@ export interface Task {
   title: TaskTitle;
   createdAt: CreatedAt;
   completed: Completed;
+  tagIds: TagId[];
 }
 
 export interface TaskHistory {
   title: TaskTitle;
+  tagIds: TagId[];
   completedAt: CompletedAt;
 }
 
@@ -72,6 +75,7 @@ export function useTask() {
       createdAt: new Date().toISOString(),
       title: "",
       completed: false,
+      tagIds: [],
     };
     if (insertAfterTaskId) {
       tasks.value.splice(
@@ -86,9 +90,11 @@ export function useTask() {
       newPopTaskId.value = taskId;
     });
   }
+
   function getTask(taskId: TaskId) {
     return tasks.value.find((v) => v.taskId == taskId)!;
   }
+
   function findTaskHistory(taskTitle: TaskTitle): TaskHistoryInfo | null {
     var taskHistory = taskHistories.value.find((v) => v.title == taskTitle);
     return taskHistory
@@ -104,6 +110,7 @@ export function useTask() {
         }
       : null;
   }
+
   function deleteTaskHistory(taskTitle: TaskTitle) {
     var index = taskHistories.value.findIndex((v) => v.title == taskTitle);
     console.log("deleteTaskHistory", { taskTitle, index });
@@ -117,13 +124,17 @@ export function useTask() {
     if (task.title) {
       task.completed = checked;
       if (checked) {
+        var tagIds = [...task.tagIds];
+        var completedAt = new Date().toISOString();
         var taskHistory = findTaskHistory(task.title);
         if (taskHistory) {
-          taskHistory.completedAt = new Date().toISOString();
+          taskHistory.completedAt = completedAt;
+          taskHistory.tagIds.splice(0, taskHistory.tagIds.length, ...tagIds);
         } else {
           taskHistories.value.push({
             title: task.title,
-            completedAt: new Date().toISOString(),
+            completedAt,
+            tagIds,
           });
         }
       }
@@ -148,6 +159,28 @@ export function useTask() {
     }
   }
 
+  function addTaskTag(taskId: TaskId, tagId: TagId) {
+    var task = tasks.value.find((v) => v.taskId == taskId);
+    if (task) {
+      task.tagIds.push(tagId);
+    }
+  }
+
+  function removeTaskTag(taskId: TaskId, tagId: TagId) {
+    var task = tasks.value.find((v) => v.taskId == taskId);
+    if (task) {
+      var index = task.tagIds.findIndex((v) => v == tagId);
+      task.tagIds.splice(index, 1);
+    }
+  }
+
+  function setTaskTagIds(taskId: TaskId, tagIds: TagId[]) {
+    var task = tasks.value.find((v) => v.taskId == taskId);
+    if (task) {
+      task.tagIds.splice(0, task.tagIds.length, ...tagIds);
+    }
+  }
+
   const taskHistoryInfos = computed(() =>
     taskHistories.value.map((v) => ({
       ...v,
@@ -159,6 +192,7 @@ export function useTask() {
       dateLabel: new Date(v.completedAt).toLocaleDateString(),
     }))
   );
+
   return {
     tasks,
     newPopTaskId,
@@ -170,5 +204,8 @@ export function useTask() {
     taskHistoryInfos,
     findTaskHistory,
     deleteTaskHistory,
+    addTaskTag,
+    removeTaskTag,
+    setTaskTagIds,
   };
 }

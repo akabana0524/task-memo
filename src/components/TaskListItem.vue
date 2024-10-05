@@ -22,10 +22,22 @@
         @keydown="keyDown"
       >
         <template v-slot:item="{ item, props }">
-          <TaskHistory v-bind="props" :taskHistoryInfo="item.raw" />
+          <TaskHistory
+            v-bind="props"
+            :taskHistoryInfo="item.raw"
+            @click="clickHistory"
+          />
           <v-divider />
         </template>
       </v-combobox>
+      <div>
+        <TaskTag
+          v-for="tagId in task.tagIds"
+          :key="tagId"
+          :task-id="task.taskId"
+          :tag-id="tagId"
+        />
+      </div>
     </template>
     <template v-slot:subtitle>
       <div v-if="taskHistory != null" style="text-align: end">
@@ -34,13 +46,23 @@
         }})
       </div>
     </template>
+    <template v-slot:append>
+      <v-menu>
+        <template v-slot:activator="{ props }">
+          <v-btn v-bind="props" icon="mdi-tag" />
+        </template>
+        <TagAppendList :task-id="task.taskId" :ignore-tag-ids="task.tagIds" />
+      </v-menu>
+    </template>
   </v-list-item>
 </template>
 <script lang="ts" setup>
-import { computed, toRefs, useTemplateRef, watch } from "vue";
+import { computed, nextTick, toRefs, useTemplateRef, watch } from "vue";
 import type { VCombobox } from "vuetify/components";
 import { Task, useTask } from "../composables/Task";
+import TagAppendList from "./TagAppendList.vue";
 import TaskHistory from "./TaskHistory.vue";
+import TaskTag from "./TaskTag.vue";
 
 interface TaskListItemProps {
   task: Task;
@@ -54,6 +76,7 @@ const {
   findTaskHistory,
   addBlankTask,
   newPopTaskId,
+  setTaskTagIds,
 } = useTask();
 watch(newPopTaskId, (v) => {
   if (task.value.taskId == v) {
@@ -68,9 +91,14 @@ const _check = computed<boolean>({
   set: (v) => changeCompleteTask(task.value.taskId, v),
 });
 function keyDown(e: KeyboardEvent) {
-  if (e.code == "Enter") {
+  if (!e.isComposing && e.code == "Enter") {
     addBlankTask(task.value.taskId);
   }
+}
+function clickHistory() {
+  nextTick(() => {
+    setTaskTagIds(task.value.taskId, taskHistory.value!.tagIds);
+  });
 }
 </script>
 
