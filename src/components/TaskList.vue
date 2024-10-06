@@ -15,11 +15,19 @@
 </template>
 
 <script lang="ts" setup>
-import { useTask } from "../composables/Task";
+import { computed, toRefs } from "vue";
+import { TaskCategoryId, useTask } from "../composables/Task";
 import TaskListItem from "./TaskListItem.vue";
 
-const { tasks, addBlankTask } = useTask();
+interface TaskListProps {
+  taskCategoryId: TaskCategoryId;
+}
+
+const props = defineProps<TaskListProps>();
+const { taskCategoryId } = toRefs(props);
+const { addBlankTask, findTasksByCategoryId } = useTask();
+const tasks = computed(() => findTasksByCategoryId(taskCategoryId.value));
 function _addBlankTask() {
-  addBlankTask();
+  addBlankTask(taskCategoryId.value);
 }
 </script>

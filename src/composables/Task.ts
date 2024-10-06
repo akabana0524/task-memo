@@ -1,6 +1,11 @@
 import { computed, nextTick, ref, watch } from "vue";
 import { TagId } from "./Tag";
 
+export type TaskCategoryId = string;
+export type TaskCategoryName = string;
+export type TaskCategoryIcon = string;
+export type TaskCategoryColor = string;
+
 export type TaskId = string;
 export type TaskTitle = string;
 export type CreatedAt = string;
@@ -9,12 +14,20 @@ export type DifferenceInDaysLabel = string;
 export type DateLabel = string;
 export type Completed = boolean;
 
+export interface TaskCategory {
+  taskCategoryId: TaskCategoryId;
+  taskCategoryName: TaskCategoryName;
+  taskCategoryIcon: TaskCategoryIcon;
+  taskCategoryColor: TaskCategoryColor;
+}
+
 export interface Task {
   taskId: TaskId;
   title: TaskTitle;
   createdAt: CreatedAt;
   completed: Completed;
   tagIds: TagId[];
+  taskCategoryId: TaskCategoryId;
 }
 
 export interface TaskHistory {
@@ -29,11 +42,19 @@ export interface TaskHistoryInfo extends TaskHistory {
 }
 
 // global
+const taskCategories = ref<TaskCategory[]>([]);
 const tasks = ref<Task[]>([]);
 const taskHistories = ref<TaskHistory[]>([]);
 const newPopTaskId = ref<TaskId | null>(null);
 
 // save
+watch(
+  taskCategories,
+  (v) => {
+    localStorage.setItem("taskCategories", JSON.stringify(v));
+  },
+  { deep: true }
+);
 watch(
   tasks,
   (v) => {
@@ -51,6 +72,16 @@ watch(
 
 export function useTask() {
   // functions
+
+  function addDefaultTaskCategory() {
+    taskCategories.value.push({
+      taskCategoryId: crypto.randomUUID(),
+      taskCategoryIcon: "mdi-format-list-checkbox",
+      taskCategoryName: "TASK",
+      taskCategoryColor: "",
+    });
+  }
+
   function loadTasks() {
     var tasksJson = localStorage.getItem("tasks");
     if (tasksJson) {
@@ -66,9 +97,23 @@ export function useTask() {
         ..._taskHistories
       );
     }
+    var taskCategoryJson = localStorage.getItem("taskCategories");
+    if (taskCategoryJson) {
+      var _taskCategories: TaskCategory[] = JSON.parse(taskCategoryJson);
+      taskCategories.value.splice(
+        0,
+        taskCategories.value.length,
+        ..._taskCategories
+      );
+    } else {
+      addDefaultTaskCategory();
+    }
   }
 
-  function addBlankTask(insertAfterTaskId?: TaskId) {
+  function addBlankTask(
+    taskCategoryId?: TaskCategoryId,
+    insertAfterTaskId?: TaskId
+  ) {
     var taskId = crypto.randomUUID();
     var newTask = {
       taskId,
@@ -76,6 +121,7 @@ export function useTask() {
       title: "",
       completed: false,
       tagIds: [],
+      taskCategoryId: taskCategoryId || "",
     };
     if (insertAfterTaskId) {
       tasks.value.splice(
@@ -93,6 +139,9 @@ export function useTask() {
 
   function getTask(taskId: TaskId) {
     return tasks.value.find((v) => v.taskId == taskId)!;
+  }
+  function findTasksByCategoryId(taskCategoryId: TaskCategoryId) {
+    return tasks.value.filter((v) => v.taskCategoryId == taskCategoryId);
   }
 
   function findTaskHistory(taskTitle: TaskTitle): TaskHistoryInfo | null {
@@ -193,8 +242,19 @@ export function useTask() {
     }))
   );
 
+  function deleteTaskCategory(taskCategoryId: TaskCategoryId) {
+    var index = taskCategories.value.findIndex(
+      (v) => v.taskCategoryId == taskCategoryId
+    );
+    if (index != -1) {
+      taskCategories.value.splice(index, 1);
+    }
+  }
+
   return {
+    taskCategories,
     tasks,
+    findTasksByCategoryId,
     newPopTaskId,
     addBlankTask,
     changeCompleteTask,
@@ -207,5 +267,7 @@ export function useTask() {
     addTaskTag,
     removeTaskTag,
     setTaskTagIds,
+    addDefaultTaskCategory,
+    deleteTaskCategory,
   };
 }

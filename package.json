@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/lodash": "^4.17.10",
+    "lodash": "^4.17.21",
     "vue": "^3.4.37",
     "vuedraggable": "next",
     "vuetify": "^3.7.2"
