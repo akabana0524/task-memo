@@ -92,7 +92,7 @@ const _check = computed<boolean>({
 });
 function keyDown(e: KeyboardEvent) {
   if (!e.isComposing && e.key == "Enter") {
-    addBlankTask(task.value.taskId);
+    addBlankTask(task.value.taskCategoryId, task.value.taskId);
   }
 }
 function clickHistory() {
