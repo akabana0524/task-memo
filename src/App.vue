@@ -25,7 +25,7 @@
               <v-divider />
               <v-list-item
                 title="タスク入れ替えモード"
-                prepend-icon="mdi-trash-can"
+                prepend-icon="mdi-swap-vertical"
                 base-color="success"
                 @click="activateMoveTaskMode"
               />
