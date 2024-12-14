@@ -9,13 +9,13 @@
           <v-menu activator="parent">
             <v-list>
               <v-list-item
-                title="チェック済みを削除"
+                title="チェック済みタスクを削除"
                 prepend-icon="mdi-trash-can"
                 base-color="success"
                 @click="removeCompletedTasks"
               />
               <v-list-item
-                title="全項目を削除"
+                title="全タスクを削除"
                 prepend-icon="mdi-trash-can"
                 base-color="red"
                 @click="removeAllTasks"
