@@ -15,7 +15,7 @@ watch(
   (v) => {
     localStorage.setItem("tags", JSON.stringify(v));
   },
-  { deep: true }
+  { deep: true },
 );
 
 export function useTag() {

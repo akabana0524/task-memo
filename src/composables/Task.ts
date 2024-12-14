@@ -53,21 +53,21 @@ watch(
   (v) => {
     localStorage.setItem("taskCategories", JSON.stringify(v));
   },
-  { deep: true }
+  { deep: true },
 );
 watch(
   tasks,
   (v) => {
     localStorage.setItem("tasks", JSON.stringify(v));
   },
-  { deep: true }
+  { deep: true },
 );
 watch(
   taskHistories,
   (v) => {
     localStorage.setItem("taskHistories", JSON.stringify(v));
   },
-  { deep: true }
+  { deep: true },
 );
 
 export function useTask() {
@@ -94,7 +94,7 @@ export function useTask() {
       taskHistories.value.splice(
         0,
         taskHistories.value.length,
-        ..._taskHistories
+        ..._taskHistories,
       );
     }
     var taskCategoryJson = localStorage.getItem("taskCategories");
@@ -103,7 +103,7 @@ export function useTask() {
       taskCategories.value.splice(
         0,
         taskCategories.value.length,
-        ..._taskCategories
+        ..._taskCategories,
       );
     } else {
       addDefaultTaskCategory();
@@ -112,7 +112,7 @@ export function useTask() {
 
   function addBlankTask(
     taskCategoryId?: TaskCategoryId,
-    insertAfterTaskId?: TaskId
+    insertAfterTaskId?: TaskId,
   ) {
     var taskId = crypto.randomUUID();
     var newTask = {
@@ -127,7 +127,7 @@ export function useTask() {
       tasks.value.splice(
         tasks.value.findIndex((v) => v.taskId == insertAfterTaskId) + 1,
         0,
-        newTask
+        newTask,
       );
     } else {
       tasks.value.push(newTask);
@@ -153,7 +153,7 @@ export function useTask() {
             Math.floor(
               (new Date().getTime() -
                 new Date(taskHistory.completedAt).getTime()) /
-                (1000 * 60 * 60 * 24)
+                (1000 * 60 * 60 * 24),
             ) + "日前",
           dateLabel: new Date(taskHistory.completedAt).toLocaleDateString(),
         }
@@ -197,10 +197,10 @@ export function useTask() {
     removeTargetTaskIds.forEach(removeTask);
   }
   function removeAllTasks() {
-    if(!confirm("全てのタブの全てのタスクを削除します。よろしいですか？")) {
+    if (!confirm("全てのタブの全てのタスクを削除します。よろしいですか？")) {
       return;
     }
-    if(!confirm("本当によろしいですか？")) {
+    if (!confirm("本当によろしいですか？")) {
       return;
     }
     var removeTargetTaskIds = tasks.value.map((v) => v.taskId);
@@ -242,15 +242,15 @@ export function useTask() {
       differenceInDaysLabel:
         Math.floor(
           (new Date().getTime() - new Date(v.completedAt).getTime()) /
-            (1000 * 60 * 60 * 24)
+            (1000 * 60 * 60 * 24),
         ) + "日前",
       dateLabel: new Date(v.completedAt).toLocaleDateString(),
-    }))
+    })),
   );
 
   function deleteTaskCategory(taskCategoryId: TaskCategoryId) {
     var index = taskCategories.value.findIndex(
-      (v) => v.taskCategoryId == taskCategoryId
+      (v) => v.taskCategoryId == taskCategoryId,
     );
     if (index != -1) {
       taskCategories.value.splice(index, 1);

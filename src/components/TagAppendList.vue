@@ -25,6 +25,6 @@ const { taskId, ignoreTagIds } = toRefs(props);
 const { tags } = useTag();
 
 const visibleTags = computed(() =>
-  tags.value.filter((v) => !ignoreTagIds.value.includes(v.id))
+  tags.value.filter((v) => !ignoreTagIds.value.includes(v.id)),
 );
 </script>

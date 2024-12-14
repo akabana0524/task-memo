@@ -10,7 +10,7 @@ export function useTheme() {
     theme.value = theme.value === "light" ? "dark" : "light";
   }
   const themeIcon = computed(() =>
-    theme.value == "light" ? "mdi-weather-sunny" : "mdi-weather-night"
+    theme.value == "light" ? "mdi-weather-sunny" : "mdi-weather-night",
   );
   return { loadTheme, swapTheme, theme, themeIcon };
 }

@@ -43,7 +43,11 @@ import { useTask } from "./composables/Task";
 import { useTheme } from "./composables/Theme";
 
 const { loadTags } = useTag();
-const { loadTasks, removeCompletedTasks, removeAllTasks } = useTask();
+const {
+  loadTasks,
+  removeCompletedTasks,
+  removeAllTasks,
+} = useTask();
 const { loadTheme, theme } = useTheme();
 
 loadTags();
