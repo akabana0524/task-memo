@@ -303,6 +303,35 @@ export function useTask() {
     }
   }
 
+  function canMoveTaskCategory(
+    taskCategoryId: TaskCategoryId,
+    slideCount: number,
+  ) {
+    var index = taskCategories.value.findIndex(
+      (v) => v.taskCategoryId == taskCategoryId,
+    );
+    return (
+      index != -1 &&
+      index + slideCount >= 0 &&
+      index + slideCount <= taskCategories.value.length - 1
+    );
+  }
+
+  function moveTaskCategory(
+    taskCategoryId: TaskCategoryId,
+    slideCount: number,
+  ) {
+    if (canMoveTaskCategory(taskCategoryId, slideCount)) {
+      var index = taskCategories.value.findIndex(
+        (v) => v.taskCategoryId == taskCategoryId,
+      );
+      var taskCategoryA = taskCategories.value[index];
+      var taskCategoryB = taskCategories.value[index + slideCount];
+      taskCategories.value[index] = taskCategoryB;
+      taskCategories.value[index + slideCount] = taskCategoryA;
+    }
+  }
+
   return {
     taskCategories,
     tasks,
@@ -327,5 +356,8 @@ export function useTask() {
     deactivateMoveTaskMode,
     canMoveTask,
     moveTask,
+
+    canMoveTaskCategory,
+    moveTaskCategory,
   };
 }

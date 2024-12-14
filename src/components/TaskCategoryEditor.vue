@@ -9,14 +9,28 @@
         />
       </v-col>
       <v-col cols="auto">
+        <v-btn
+          icon
+          variant="flat"
+          :disabled="!canMoveTaskCategory(taskCategory.taskCategoryId, -1)"
+          @click="() => moveTaskCategory(taskCategory.taskCategoryId, -1)"
+        >
+          <v-icon icon="mdi-arrow-up" />
+        </v-btn>
+        <v-btn
+          icon
+          variant="flat"
+          :disabled="!canMoveTaskCategory(taskCategory.taskCategoryId, 1)"
+          @click="() => moveTaskCategory(taskCategory.taskCategoryId, 1)"
+        >
+          <v-icon icon="mdi-arrow-down" />
+        </v-btn>
         <v-menu>
           <template v-slot:activator="{ props }">
             <v-btn v-bind="props" icon="mdi-palette" variant="flat" />
           </template>
           <v-color-picker v-model="taskCategory.taskCategoryColor" />
         </v-menu>
-      </v-col>
-      <v-col cols="auto">
         <v-btn
           @click="_deleteTaskCategory"
           icon="mdi-trash-can"
@@ -36,7 +50,7 @@ interface TaskCategoryEditorProps {
 
 const props = defineProps<TaskCategoryEditorProps>();
 const { taskCategory } = toRefs(props);
-const { deleteTaskCategory } = useTask();
+const { deleteTaskCategory, canMoveTaskCategory, moveTaskCategory } = useTask();
 function _deleteTaskCategory() {
   deleteTaskCategory(taskCategory.value.taskCategoryId);
 }
