@@ -47,6 +47,22 @@
       </div>
     </template>
     <template v-slot:append>
+      <div v-if="moveTaskModeFlag">
+        <v-btn
+          icon
+          :disabled="!canMoveTask(task.taskId, -1)"
+          @click="() => moveTask(task.taskId, -1)"
+        >
+          <v-icon icon="mdi-arrow-up" />
+        </v-btn>
+        <v-btn
+          icon
+          :disabled="!canMoveTask(task.taskId, 1)"
+          @click="() => moveTask(task.taskId, 1)"
+        >
+          <v-icon icon="mdi-arrow-down" />
+        </v-btn>
+      </div>
       <v-menu>
         <template v-slot:activator="{ props }">
           <v-btn v-bind="props" icon="mdi-tag" />
@@ -77,6 +93,9 @@ const {
   addBlankTask,
   newPopTaskId,
   setTaskTagIds,
+  moveTaskModeFlag,
+  canMoveTask,
+  moveTask,
 } = useTask();
 watch(newPopTaskId, (v) => {
   if (task.value.taskId == v) {

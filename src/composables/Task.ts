@@ -14,6 +14,8 @@ export type DifferenceInDaysLabel = string;
 export type DateLabel = string;
 export type Completed = boolean;
 
+export type MoveTaskModeFlag = boolean;
+
 export interface TaskCategory {
   taskCategoryId: TaskCategoryId;
   taskCategoryName: TaskCategoryName;
@@ -46,6 +48,7 @@ const taskCategories = ref<TaskCategory[]>([]);
 const tasks = ref<Task[]>([]);
 const taskHistories = ref<TaskHistory[]>([]);
 const newPopTaskId = ref<TaskId | null>(null);
+const moveTaskModeFlag = ref<MoveTaskModeFlag>(false);
 
 // save
 watch(
@@ -257,6 +260,49 @@ export function useTask() {
     }
   }
 
+  function activateMoveTaskMode() {
+    moveTaskModeFlag.value = true;
+  }
+
+  function deactivateMoveTaskMode() {
+    moveTaskModeFlag.value = false;
+  }
+
+  function indexOfSameCategory(taskId: TaskId) {
+    var categoryTasks = findTasksByCategoryId(getTask(taskId).taskCategoryId);
+    return categoryTasks.findIndex((v) => v.taskId == taskId);
+  }
+  function lengthOfSameCategory(taskId: TaskId) {
+    var categoryTasks = findTasksByCategoryId(getTask(taskId).taskCategoryId);
+    return categoryTasks.length;
+  }
+  function canMoveTask(taskId: TaskId, slideCount: number) {
+    var index = indexOfSameCategory(taskId);
+    if (index == -1) {
+      return false;
+    }
+    var length = lengthOfSameCategory(taskId);
+    return index + slideCount >= 0 && index + slideCount <= length - 1;
+  }
+
+  function swapTask(taskIdA: TaskId, taskIdB: TaskId) {
+    var indexA = tasks.value.findIndex((v) => v.taskId == taskIdA);
+    var indexB = tasks.value.findIndex((v) => v.taskId == taskIdB);
+    var taskA = tasks.value[indexA];
+    var taskB = tasks.value[indexB];
+    tasks.value[indexA] = taskB;
+    tasks.value[indexB] = taskA;
+  }
+
+  function moveTask(taskId: TaskId, slideCount: number) {
+    if (canMoveTask(taskId, slideCount)) {
+      var categoryTasks = findTasksByCategoryId(getTask(taskId).taskCategoryId);
+      var index = indexOfSameCategory(taskId);
+      var beforeTaskId = categoryTasks[index + slideCount].taskId;
+      swapTask(taskId, beforeTaskId);
+    }
+  }
+
   return {
     taskCategories,
     tasks,
@@ -275,5 +321,11 @@ export function useTask() {
     setTaskTagIds,
     addDefaultTaskCategory,
     deleteTaskCategory,
+
+    moveTaskModeFlag,
+    activateMoveTaskMode,
+    deactivateMoveTaskMode,
+    canMoveTask,
+    moveTask,
   };
 }

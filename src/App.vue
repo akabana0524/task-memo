@@ -4,6 +4,14 @@
       <v-app-bar :elevation="2" density="compact">
         <v-app-bar-title>Task Memo</v-app-bar-title>
         <v-spacer />
+        <v-btn
+          v-if="moveTaskModeFlag"
+          icon
+          color="primary"
+          @click="deactivateMoveTaskMode"
+        >
+          <v-icon icon="mdi-check" />
+        </v-btn>
         <v-btn icon>
           <v-icon icon="mdi-dots-vertical" />
           <v-menu activator="parent">
@@ -14,6 +22,14 @@
                 base-color="success"
                 @click="removeCompletedTasks"
               />
+              <v-divider />
+              <v-list-item
+                title="タスク入れ替えモード"
+                prepend-icon="mdi-trash-can"
+                base-color="success"
+                @click="activateMoveTaskMode"
+              />
+              <v-divider />
               <v-list-item
                 title="全タスクを削除"
                 prepend-icon="mdi-trash-can"
@@ -47,6 +63,9 @@ const {
   loadTasks,
   removeCompletedTasks,
   removeAllTasks,
+  activateMoveTaskMode,
+  deactivateMoveTaskMode,
+  moveTaskModeFlag,
 } = useTask();
 const { loadTheme, theme } = useTheme();
 
