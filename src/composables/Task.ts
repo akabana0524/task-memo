@@ -197,6 +197,12 @@ export function useTask() {
     removeTargetTaskIds.forEach(removeTask);
   }
   function removeAllTasks() {
+    if(!confirm("全てのタブの全てのタスクを削除します。よろしいですか？")) {
+      return;
+    }
+    if(!confirm("本当によろしいですか？")) {
+      return;
+    }
     var removeTargetTaskIds = tasks.value.map((v) => v.taskId);
     removeTargetTaskIds.forEach(removeTask);
   }
