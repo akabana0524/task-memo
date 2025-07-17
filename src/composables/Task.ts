@@ -199,6 +199,14 @@ export function useTask() {
       .map((v) => v.taskId);
     removeTargetTaskIds.forEach(removeTask);
   }
+
+  function removeEmptyTasks() {
+    var removeTargetTaskIds = tasks.value
+      .filter((v) => v.title == '')
+      .map((v) => v.taskId);
+    removeTargetTaskIds.forEach(removeTask);
+  }
+
   function removeAllTasks() {
     if (!confirm("全てのタブの全てのタスクを削除します。よろしいですか？")) {
       return;
@@ -340,6 +348,7 @@ export function useTask() {
     addBlankTask,
     changeCompleteTask,
     removeCompletedTasks,
+    removeEmptyTasks,
     removeAllTasks,
     loadTasks,
     taskHistoryInfos,

@@ -29,6 +29,12 @@
                 base-color="success"
                 @click="activateMoveTaskMode"
               />
+              <v-list-item
+                title="空欄タスクを削除"
+                prepend-icon="mdi-vanish"
+                base-color="success"
+                @click="removeEmptyTasks"
+              />
               <v-divider />
               <v-list-item
                 title="全タスクを削除"
@@ -63,6 +69,7 @@ const {
   loadTasks,
   removeCompletedTasks,
   removeAllTasks,
+  removeEmptyTasks,
   activateMoveTaskMode,
   deactivateMoveTaskMode,
   moveTaskModeFlag,
