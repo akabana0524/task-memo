@@ -60,6 +60,7 @@
 <script lang="ts" setup>
 import ConfigView from "./components/ConfigView.vue";
 import MainView from "./components/MainView.vue";
+import { useBackup } from "./composables/Backup";
 import { useTag } from "./composables/Tag";
 import { useTask } from "./composables/Task";
 import { useTheme } from "./composables/Theme";
@@ -74,9 +75,13 @@ const {
   deactivateMoveTaskMode,
   moveTaskModeFlag,
 } = useTask();
+const {createBackup, loadBackups} = 
+useBackup();
 const { loadTheme, theme } = useTheme();
 
 loadTags();
 loadTasks();
 loadTheme();
+loadBackups();
+createBackup();
 </script>

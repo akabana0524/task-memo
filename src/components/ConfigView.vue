@@ -21,6 +21,9 @@
           <v-tab value="ui">
             <v-icon icon="mdi-eye" />
           </v-tab>
+          <v-tab value="backups">
+            <v-icon icon="mdi-history" />
+          </v-tab>
           <v-tab value="reset">
             <v-icon icon="mdi-trash-can" />
           </v-tab>
@@ -34,6 +37,11 @@
           <v-tabs-window-item value="taskCategories">
             <v-card>
               <TaskCategoryEditorList />
+            </v-card>
+          </v-tabs-window-item>
+          <v-tabs-window-item value="backups">
+            <v-card>
+              <BackupList/>
             </v-card>
           </v-tabs-window-item>
           <v-tabs-window-item value="ui">
@@ -66,6 +74,7 @@ import { ref } from "vue";
 import { useTheme } from "../composables/Theme";
 import TagEditorList from "./TagEditorList.vue";
 import TaskCategoryEditorList from "./TaskCategoryEditorList.vue";
+import BackupList from "./BackupList.vue";
 const { swapTheme, themeIcon } = useTheme();
 const dialog = ref(false);
 const tab = ref("");
