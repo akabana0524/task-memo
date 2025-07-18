@@ -14,7 +14,6 @@ export function useBackup() {
     const { tasks, loadTasks } = useTask();
     function loadBackups() {
         var backupsJson = localStorage.getItem("backup");
-        console.log("loadBackups", { backupsJson });
         if (backupsJson) {
             var _backups: Backup[] = JSON.parse(backupsJson);
             backups.value.splice(0, backups.value.length, ..._backups);
@@ -36,7 +35,6 @@ export function useBackup() {
             date,
             tasksJson: JSON.stringify(tasks.value)
         };
-        console.log("createBackup", backup);
         backups.value.push(backup);
         while (backups.value.length > 50) {
             backups.value.shift();
