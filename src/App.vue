@@ -4,6 +4,7 @@
       <v-app-bar :elevation="2" density="compact">
         <v-app-bar-title>Task Memo</v-app-bar-title>
         <v-spacer />
+        <v-btn @click="addSample"></v-btn>
         <FirebaseGoogleAuth />
         <v-btn v-if="moveTaskModeFlag" icon color="primary" @click="deactivateMoveTaskMode">
           <v-icon icon="mdi-check" />
@@ -43,6 +44,8 @@ import { useBackup } from "./composables/Backup";
 import { useTag } from "./composables/Tag";
 import { useTask } from "./composables/Task";
 import { useTheme } from "./composables/Theme";
+import { useSample} from './composables/Sample';
+import { useWorkspace } from "./composables/Workspace";
 
 const { loadTags } = useTag();
 const {
@@ -63,4 +66,6 @@ loadTasks();
 loadTheme();
 loadBackups();
 createBackup();
+const {addSample} = useSample();
+const {} = useWorkspace();
 </script>
